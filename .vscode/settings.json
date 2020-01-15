@@ -1,0 +1,8 @@
+{
+    "cortex-debug.armToolchainPath": "/opt/gcc-arm-none-eabi/bin",
+    "cortex-debug.openocdPath": "/usr/local/bin/openocd",
+    "files.associations": {
+
+    },
+    "cSpell.enabled": false
+}

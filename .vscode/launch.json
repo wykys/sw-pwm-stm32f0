@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/discovery.elf",
+            "name": "Debug (OpenOCD)",
+            "device": "STM32F031",
+            "svdFile" : "/home/wykys/projects/cmsis-svd/data/STMicro/STM32F031x.svd",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32f0x.cfg"
+            ]
+        }
+    ]
+}

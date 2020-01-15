@@ -1,0 +1,21 @@
+{
+    "configurations": [{
+        "name": "STM32",
+        "includePath": [
+            "Inc/**",
+            "Drivers/STM32F0xx_HAL_Driver/Inc/**",
+            "Drivers/STM32F0xx_HAL_Driver/Inc/Legacy/**",
+            "Drivers/CMSIS/Device/ST/STM32F0xx/Include/**",
+            "Drivers/CMSIS/Include/**"
+        ],
+        "defines": [
+            "STM32F031x6",
+            "USE_HAL_DRIVER"
+        ],
+        "compilerPath": "/opt/gcc-arm-none-eabi/bin/arm-none-eabi-gcc",
+        "cStandard": "c99",
+        "cppStandard": "c++11",
+        "intelliSenseMode": "gcc-x64"
+    }],
+    "version": 4
+}
