@@ -4,5 +4,9 @@
     "files.associations": {
 
     },
-    "cSpell.enabled": false
+    "cSpell.enabled": false,
+    "files.exclude": {
+        ".vscode": true,
+        "build": true
+    }
 }
