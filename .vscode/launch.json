@@ -6,7 +6,7 @@
             "request": "launch",
             "servertype": "openocd",
             "cwd": "${workspaceRoot}",
-            "executable": "./build/discovery.elf",
+            "executable": "./build/sw-pwm-stm32f0.elf",
             "name": "Debug (OpenOCD)",
             "device": "STM32F031",
             "svdFile" : "/home/wykys/projects/cmsis-svd/data/STMicro/STM32F031x.svd",
