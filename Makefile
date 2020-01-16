@@ -53,15 +53,10 @@ Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.c \
 Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.c \
 Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.c \
 Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.c \
-Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.c \
-Src/gpio.c \
-Src/main.c \
-Src/stm32f0xx_hal_msp.c \
-Src/stm32f0xx_it.c \
-Src/sys.c \
-Src/system_stm32f0xx.c \
-Src/tim.c \
-Src/usart.c
+Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.c
+
+C_SOURCES += $(wildcard Src/*.c)
+
 
 
 # ASM sources
