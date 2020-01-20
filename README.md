@@ -143,6 +143,5 @@ Generování PWM bylo otestování na kontaktním poli s vývojovou deskou [nucl
 ### Schéma zapojení
 ![sch](https://raw.github.com/https://github.com/wykys/sw-pwm-stm32f0/master/img/sch.svg?sanitize=true)
 
-
 ### Video ukázka
 [![Youtube video ukázka](https://img.youtube.com/vi/GnNyuNzukyo/0.jpg)](https://www.youtube.com/watch?v=GnNyuNzukyo)
