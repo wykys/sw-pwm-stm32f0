@@ -1,21 +1,21 @@
 /**
-  ******************************************************************************
-  * File Name          : gpio.c
-  * Description        : This file provides code for the configuration
-  *                      of all used GPIO pins.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * File Name          : gpio.c
+ * Description        : This file provides code for the configuration
+ *                      of all used GPIO pins.
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under BSD 3-Clause license,
+ * the "License"; You may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at:
+ *                        opensource.org/licenses/BSD-3-Clause
+ *
+ ******************************************************************************
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "gpio.h"
@@ -30,63 +30,68 @@
 
 /* USER CODE END 1 */
 
-/** Configure pins as 
-        * Analog 
-        * Input 
-        * Output
-        * EVENT_OUT
-        * EXTI
-*/
+/** Configure pins as
+ * Analog
+ * Input
+ * Output
+ * EVENT_OUT
+ * EXTI
+ */
 void MX_GPIO_Init(void)
 {
+    GPIO_InitTypeDef GPIO_InitStruct = { 0 };
 
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
+    /* GPIO Ports Clock Enable */
+    __HAL_RCC_GPIOF_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOF_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
+    /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(GPIOF, PWM7_Pin | PWM8_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOF, PWM7_Pin|PWM8_Pin, GPIO_PIN_RESET);
+    /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(GPIOA, PWM14_Pin | PWM15_Pin | PWM16_Pin | PWM17_Pin
+      | PWM18_Pin | PWM19_Pin | MEASUREMENT_Pin | PWM9_Pin
+      | PWM0_Pin | PWM1_Pin | PWM10_Pin | PWM2_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, PWM14_Pin|PWM15_Pin|PWM16_Pin|PWM17_Pin 
-                          |PWM18_Pin|PWM19_Pin|PWM20_Pin|PWM9_Pin 
-                          |PWM0_Pin|PWM1_Pin|PWM10_Pin|PWM2_Pin, GPIO_PIN_RESET);
+    /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(GPIOB, PWM3_Pin | PWM6_Pin | PWM13_Pin | PWM12_Pin
+      | PWM11_Pin | PWM5_Pin | PWM4_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, PWM3_Pin|PWM6_Pin|PWM13_Pin|PWM12_Pin 
-                          |PWM11_Pin|PWM5_Pin|PWM4_Pin, GPIO_PIN_RESET);
+    /*Configure GPIO pins : PFPin PFPin */
+    GPIO_InitStruct.Pin   = PWM7_Pin | PWM8_Pin;
+    GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull  = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PFPin PFPin */
-  GPIO_InitStruct.Pin = PWM7_Pin|PWM8_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+    /*Configure GPIO pins : PAPin PAPin PAPin PAPin
+     *                       PAPin PAPin PAPin PAPin
+     *                       PAPin PAPin PAPin */
+    GPIO_InitStruct.Pin = PWM14_Pin | PWM15_Pin | PWM16_Pin | PWM17_Pin
+      | PWM18_Pin | PWM19_Pin | PWM9_Pin | PWM0_Pin
+      | PWM1_Pin | PWM10_Pin | PWM2_Pin;
+    GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull  = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PAPin PAPin PAPin PAPin 
-                           PAPin PAPin PAPin PAPin 
-                           PAPin PAPin PAPin PAPin */
-  GPIO_InitStruct.Pin = PWM14_Pin|PWM15_Pin|PWM16_Pin|PWM17_Pin 
-                          |PWM18_Pin|PWM19_Pin|PWM20_Pin|PWM9_Pin 
-                          |PWM0_Pin|PWM1_Pin|PWM10_Pin|PWM2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    /*Configure GPIO pin : PtPin */
+    GPIO_InitStruct.Pin   = MEASUREMENT_Pin;
+    GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull  = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(MEASUREMENT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PBPin PBPin PBPin PBPin 
-                           PBPin PBPin PBPin */
-  GPIO_InitStruct.Pin = PWM3_Pin|PWM6_Pin|PWM13_Pin|PWM12_Pin 
-                          |PWM11_Pin|PWM5_Pin|PWM4_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-}
+    /*Configure GPIO pins : PBPin PBPin PBPin PBPin
+     *                       PBPin PBPin PBPin */
+    GPIO_InitStruct.Pin = PWM3_Pin | PWM6_Pin | PWM13_Pin | PWM12_Pin
+      | PWM11_Pin | PWM5_Pin | PWM4_Pin;
+    GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull  = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+} /* MX_GPIO_Init */
 
 /* USER CODE BEGIN 2 */
 

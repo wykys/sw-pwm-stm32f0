@@ -27,7 +27,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "sw_pwm.h"
+#include "setup.h"
+#include "super-loop.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -93,8 +94,10 @@ int main(void)
     MX_TIM17_Init();
     MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
-    sw_pwm_init(&htim17);
+    setup();
+    super_loop();
     /* USER CODE END 2 */
+
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
