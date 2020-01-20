@@ -97,7 +97,7 @@ Deaktivuje prerušení od časovače a nastavý všechny SW PWM kanály do logic
 sw_pwm.stop()
 ```
 
-## Chování knihovny
+## Testování knihovny
 pro vyhodnocení knihovny byl využit jeden GPIO pin jehož hodnota byla nastvena na __H__ při vstupu do callbacku obsluhy přerušení a opět nastavena do __L__ před jeho ukončením. Osciloskopem byla měřena střída jakožto informace o zatížení procesoru.
 
 Při všech experimentech byl MCU i timer taktován na `48 MHz`.
@@ -136,3 +136,6 @@ Tento test byl prováděn s kmitočtem `200 Hz` a optimalizací `-O3`.
 |           13 |             39 % |
 |           17 |             50 % |
 |           20 |             57 % |
+
+## HW na ověření činnosti
+!(img/sch.svg)
