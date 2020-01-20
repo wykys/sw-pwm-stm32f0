@@ -137,5 +137,12 @@ Tento test byl prováděn s kmitočtem `200 Hz` a optimalizací `-O3`.
 |           17 |             50 % |
 |           20 |             57 % |
 
-## HW na ověření činnosti
-!(img/sch.svg)
+## HW na ověření funkce
+Generování PWM bylo otestování na kontaktním poli s vývojovou deskou [nucleo-f021k6](https://www.st.com/en/evaluation-tools/nucleo-f031k6.html). Ta je osazena MCU STM32F031K6, dále obsahuje ST-Link V2, stabilizátor napětí a indikační LED.
+Úkolem HW pžípravku je mimo otestovánání funkce PWM i měřit zatížení jádra mikrokontroléru v tomto případě jde o ARM Cortex-M0, taktovaným na `48 MHz` s `32 Kib` Flash a `4 KiB` SRAM. Měření je pováděno na pinu označeném jako `MEASUREMENT`. Dále přípravek obsahuje integrovaqné obvody TESLA 7404 TTL NOT pro buzení LED.
+### Schéma zapojení
+![sch](https://raw.github.com/https://github.com/wykys/sw-pwm-stm32f0/master/img/sch.svg?sanitize=true)
+
+
+### Video ukázka
+[![Youtube video ukázka](https://img.youtube.com/vi/GnNyuNzukyo/0.jpg)](https://www.youtube.com/watch?v=GnNyuNzukyo)
