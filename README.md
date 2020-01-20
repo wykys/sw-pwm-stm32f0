@@ -149,7 +149,7 @@ Generování PWM bylo otestování na kontaktním poli s vývojovou deskou [nucl
 ## Nástroje
 Projekt byl vytvořes s použitím těchto nástrojů:
 - [STM32-tools](https://github.com/wykys/STM32-tools)
-- [Beatifly-C](https://github.com/wykys/beautifly-c)
+- [Beautifly-C](https://github.com/wykys/beautifly-c)
 - [STM32CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html)
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)
