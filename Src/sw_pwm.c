@@ -1,84 +1,198 @@
+/**
+ * "THE ROOT BEER LICENSE" (Revision 3) :
+ * <vvykys@gmail.com> wrote this file.
+ * As long as you retain this notice you
+ * can do whatever you want with this stuff.
+ * If we meet some day, and you think
+ * this stuff is worth it, you can buy me a root beer in return.
+ * Also, Jan Vykydal (wykys) is not responsible for anything that
+ * might happen through use of this file.
+ *
+ * @brief Library for generating software pulse width modulation.
+ * @author     wykys
+ * @version    1.0
+ * @date       20.1.2020
+ */
+
 #include "sw_pwm.h"
 
-typedef enum {
-    PHASE_CORRECT,
-    PHASE_INCORRECT
-} sw_pwm_phase_t;
-
-typedef struct {
-    TIM_HandleTypeDef *htim_p;
-    sw_pwm_phase_t     phase;
-    uint8_t            cnt;
-} sw_pwm_config_t;
-
+extern volatile sw_pwm_channel_t sw_pwm_channel[];
 volatile sw_pwm_config_t sw_pwm_config;
 
-volatile sw_pwm_channel_t sw_pwm_channel[SW_PWM_NUMBER_OF_CHANNELS] = {
-    { PWM0_GPIO_Port,  PWM0_Pin  },
-    { PWM1_GPIO_Port,  PWM1_Pin  },
-    { PWM2_GPIO_Port,  PWM2_Pin  },
-    { PWM3_GPIO_Port,  PWM3_Pin  },
-    { PWM4_GPIO_Port,  PWM4_Pin  },
-    { PWM5_GPIO_Port,  PWM5_Pin  },
-    { PWM6_GPIO_Port,  PWM6_Pin  },
-    { PWM7_GPIO_Port,  PWM7_Pin  },
-    { PWM8_GPIO_Port,  PWM8_Pin  },
-    { PWM9_GPIO_Port,  PWM9_Pin  },
-    { PWM10_GPIO_Port, PWM10_Pin },
-    { PWM11_GPIO_Port, PWM11_Pin },
-    { PWM12_GPIO_Port, PWM12_Pin },
-    { PWM13_GPIO_Port, PWM13_Pin },
-    { PWM14_GPIO_Port, PWM14_Pin },
-    { PWM15_GPIO_Port, PWM15_Pin }
-};
+/**
+ * @brief Macro for comparison.
+ */
+#define sw_pwm_comp()                                                                        \
+    do {                                                                                     \
+        for (int i = 0; i < sw_pwm_config.number_of_channels; i++)                           \
+        {                                                                                    \
+            if (sw_pwm_config.cnt <= sw_pwm_channel[i].comp && sw_pwm_channel[i].comp)       \
+            {                                                                                \
+                sw_pwm_fast_gpio_pin_set(sw_pwm_channel[i].port_p, sw_pwm_channel[i].pin);   \
+            }                                                                                \
+            else                                                                             \
+            {                                                                                \
+                sw_pwm_fast_gpio_pin_reset(sw_pwm_channel[i].port_p, sw_pwm_channel[i].pin); \
+            }                                                                                \
+        }                                                                                    \
+    } while (false)
 
-
-void sw_pwm_tim_start(void)
+/**
+ * @brief Callback for phase-correct PWM.
+ * @retval void
+ */
+static void sw_pwm_callback_phase_correct(void)
 {
-    HAL_TIM_Base_Start_IT(sw_pwm_config.htim_p);
+    if (sw_pwm_config.cnt_mode == SW_PWM_CNT_MODE_UP)
+    {
+        if (++sw_pwm_config.cnt == SW_PWM_CNT_MAX)
+            sw_pwm_config.cnt_mode = SW_PWM_CNT_MODE_DOWN;
+    }
+    else
+    {
+        if (!--sw_pwm_config.cnt)
+            sw_pwm_config.cnt_mode = SW_PWM_CNT_MODE_UP;
+    }
+    sw_pwm_comp();
 }
 
 /**
- * @brief Initialization software PWM.
- * @param htim_p pointer to HAL timer struct
+ * @brief Callback for phase incorrect(fast) PWM.
  * @retval void
  */
-void sw_pwm_init(TIM_HandleTypeDef *htim_p)
-{
-    sw_pwm_config.htim_p = htim_p;
-    sw_pwm_config.phase  = PHASE_INCORRECT;
-    sw_pwm_config.cnt    = 0;
-
-    for (int i = 0; i < SW_PWM_NUMBER_OF_CHANNELS; i++)
-    {
-        sw_pwm_channel[i].comp  = 255;
-        sw_pwm_channel[i].mask  = i << sw_pwm_channel[i].pin;
-        sw_pwm_channel[i].nmask = ~sw_pwm_channel[i].mask;
-    }
-
-    sw_pwm_tim_start();
-}
-
 static void sw_pwm_callback_phase_incorrect(void)
 {
     ++sw_pwm_config.cnt;
-    for (int i = 0; i < SW_PWM_NUMBER_OF_CHANNELS; i++)
+    sw_pwm_comp();
+}
+
+/**
+ * @brief Resets the counter and starts generating PWM.
+ * @retval void
+ */
+static void sw_pwm_run(void)
+{
+    sw_pwm_config.cnt = 0;
+    sw_pwm_tim_start();
+}
+
+/**
+ * @brief Stops PWM generation and turns off outputs.
+ * @retval void
+ */
+static void sw_pwm_stop(void)
+{
+    sw_pwm_tim_stop();
+    for (int i = 0; i < sw_pwm_config.number_of_channels; i++)
+        sw_pwm_fast_gpio_pin_reset(sw_pwm_channel[i].port_p, sw_pwm_channel[i].pin);
+}
+
+/**
+ * @brief Sets the PWM frequency.
+ * @param freq frequency [Hz] generated PWM signal
+ * @param pahse type of PWM phase mode
+ * @retval true is OK false is error
+ */
+static bool sw_pwm_set_freq(uint32_t freq, sw_pwm_phase_t phase)
+{
+    uint32_t arr;
+    uint32_t freq_system = HAL_RCC_GetSysClockFreq();
+    bool ret_val         = false;
+    if (sw_pwm_config.htim_p != NULL)
     {
-        if (sw_pwm_config.cnt < sw_pwm_channel[i].comp)
+        if (phase == SW_PWM_PHASE_CORRECT)
         {
-            HAL_GPIO_WritePin(sw_pwm_channel[i].port_p, sw_pwm_channel[i].pin, GPIO_PIN_SET);
+            arr = freq_system / (freq * (SW_PWM_CNT_MAX + 1) * 2) - 1;
         }
         else
         {
-            HAL_GPIO_WritePin(sw_pwm_channel[i].port_p, sw_pwm_channel[i].pin, GPIO_PIN_RESET);
+            arr = freq_system / (freq * (SW_PWM_CNT_MAX + 1)) - 1;
+        }
+
+        if (arr >= (SW_PWM_MINIMUM_OF_TICKS_TO_IT - 1))
+        {
+            ret_val = true;
+        }
+        else
+        {
+            arr = SW_PWM_MINIMUM_OF_TICKS_TO_IT - 1;
+        }
+        sw_pwm_config.freq = freq_system / ((arr + 1) * (SW_PWM_CNT_MAX + 1) * ((phase == SW_PWM_PHASE_CORRECT) ? 2 : 1));
+        sw_pwm_config.htim_p->Instance->ARR = arr;
+        sw_pwm_config.phase = phase;
+    }
+    return ret_val;
+} /* sw_pwm_set_freq */
+
+/**
+ * @brief Initialization software PWM.
+ * @param htim_p pointer to HAL timer structure
+ * @param number_of_channels number of PWM channels
+ * @param freq frequency [Hz] generated PWM signal
+ * @param pahse type of PWM phase mode
+ * @param comp comparation value
+ * @retval void
+ */
+void sw_pwm_init(
+    TIM_HandleTypeDef *htim_p,
+    uint32_t           number_of_channels,
+    uint32_t           freq,
+    sw_pwm_phase_t     phase,
+    sw_pwm_comp_init_t comp
+)
+{
+    sw_pwm_config.htim_p   = htim_p;
+    sw_pwm_config.phase    = SW_PWM_PHASE_CORRECT;
+    sw_pwm_config.cnt_mode = SW_PWM_CNT_MODE_UP;
+    sw_pwm_config.cnt      = 0;
+    sw_pwm_config.number_of_channels = number_of_channels;
+
+    sw_pwm_stop();
+
+    if (phase == SW_PWM_PHASE_CORRECT)
+    {
+        sw_pwm_config.it_callback = sw_pwm_callback_phase_correct;
+    }
+    else
+    {
+        sw_pwm_config.it_callback = sw_pwm_callback_phase_incorrect;
+    }
+
+    if (comp != SW_PWM_COMP_NOINIT)
+    {
+        for (int i = 0; i < sw_pwm_config.number_of_channels; i++)
+        {
+            switch (comp)
+            {
+                case (SW_PWM_COMP_FULL):
+                {
+                    sw_pwm_channel[i].comp = SW_PWM_CNT_MAX;
+                    break;
+                }
+                case (SW_PWM_COMP_HALF):
+                {
+                    sw_pwm_channel[i].comp = SW_PWM_CNT_MAX / 2;
+                    break;
+                }
+                default:
+                {
+                    sw_pwm_channel[i].comp = 0;
+                    break;
+                }
+            }
         }
     }
-}
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim_p)
-{
-    if (htim_p == sw_pwm_config.htim_p)
-    {
-        sw_pwm_callback_phase_incorrect();
-    }
-}
+    sw_pwm_set_freq(freq, phase);
+} /* sw_pwm_init */
+
+/**
+ * @brief singleton for SW PWM control
+ */
+volatile sw_pwm_t sw_pwm = {
+    .init     = sw_pwm_init,
+    .run      = sw_pwm_run,
+    .stop     = sw_pwm_stop,
+    .channel  = sw_pwm_channel,
+    .config_p = &sw_pwm_config
+};
