@@ -1,6 +1,6 @@
 # SW-PWM pro STM32F0
 
-Projekt obsahuje implementaci knihovny pro softwarové generování pulzně šířkové modulace `sw-pwm.c` a `sw-pwm.h`. Ke své činnosti využívá jeden časovač. Je založena na knihovně HAL od STMicroelectronics. Umožnuje generovat jak rychlé, tak i fázově korektní PWM.
+Projekt obsahuje implementaci knihovny pro softwarové generování pulzně šířkové modulace `sw-pwm.c` a `sw-pwm.h`. Ke své činnosti využívá jeden časovač. Je založena na knihovně HAL od STMicroelectronics. Umožnuje generovat jak rychlé, tak i fázově korektní PWM. Dá se snadno portovat i na jiné rodiny STM32. Její využití je zamíšleno hlavně pro ovládání jesu většího množství LED.
 
 ## Použitý knihovny
 Je třeba si vytvořit instanci struktury `sw_pwm_channel_t` a pojmenovat ji `sw_pwm_channel`! Tu je třeba inicializovat na GPIO která chce uživatel použít. Předpokládá se, že uživatel si GPIO nastavyl jako výstupní za použití nástroje [STM32CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html).
@@ -86,7 +86,7 @@ sw_pwm.channel[2] = 127;
 
 // ukázka změny hodnot všech kanálů
 for (int i = 0; i < sw_pwm.config->number_of_channels; i++)
-    sw_pwm.channel[2] = 22;
+    sw_pwm.channel[i] = 22;
 ```
 
 ### Zastavení generování `sw_pwm.stop()`
@@ -96,3 +96,43 @@ Deaktivuje prerušení od časovače a nastavý všechny SW PWM kanály do logic
 // zastavení generování PWM signálu
 sw_pwm.stop()
 ```
+
+## Chování knihovny
+pro vyhodnocení knihovny byl využit jeden GPIO pin jehož hodnota byla nastvena na __H__ při vstupu do callbacku obsluhy přerušení a opět nastavena do __L__ před jeho ukončením. Osciloskopem byla měřena střída jakožto informace o zatížení procesoru.
+
+Při všech experimentech byl MCU i timer taktován na `48 MHz`.
+
+### Vliv optimalizace na vytížení CPU
+Test proběl při kmitočtu `100 Hz` a `16` aktivních kanálech.
+
+| __OPT__ |        __POPIS__         | __VYTÍŽENÍ CPU__ |
+|:-------:|:-------------------------|-----------------:|
+|  `-O0`  | optimalizace off         |             57 % |
+|  `-O1`  | optimalizace level 1     |             25 % |
+|  `-O2`  | optimalizace level 2     |             24 % |
+|  `-O3`  | optimalizace level 3     |             23 % |
+|  `-Os`  | optimalizace na velikost |             33 % |
+
+### Vliv generované frekvence na vytížení CPU
+Tento test byl prováděn s `18` kanály a optimalizací `-O3`.
+
+| __FREQ__ | __VYTÍŽENÍ CPU__ |
+|--------------:|-----------------:|
+|          1 Hz |              1 % |
+|         10 Hz |              3 % |
+|        100 Hz |             26 % |
+|        200 Hz |             53 % |
+|        300 Hz |             74 % |
+
+### Vliv počtu kanálů na vytížení CPU
+Tento test byl prováděn s kmitočtem `200 Hz` a optimalizací `-O3`.
+
+| POČET KANÁLŮ | __VYTÍŽENÍ CPU__ |
+|-------------:|-----------------:|
+|            1 |              7 % |
+|            3 |             12 % |
+|            7 |             23 % |
+|           10 |             31 % |
+|           13 |             39 % |
+|           17 |             50 % |
+|           20 |             57 % |
