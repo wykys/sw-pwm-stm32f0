@@ -1,9 +1,9 @@
 # SW-PWM pro STM32F0
 
-Projekt obsahuje implementaci knihovny pro softwarové generování pulzně šířkové modulace `sw-pwm.c` a `sw-pwm.h`. Ke své činnosti využívá jeden časovač. Je založena na knihovně HAL od STMicroelectronics. Umožnuje generovat jak rychlé, tak i fázově korektní PWM. Dá se snadno portovat i na jiné rodiny STM32. Její využití je zamíšleno hlavně pro ovládání jesu většího množství LED.
+Projekt obsahuje implementaci knihovny pro softwarové generování pulzně šířkové modulace `sw-pwm.c` a `sw-pwm.h`. Ke své činnosti využívá jeden časovač. Je založena na knihovně HAL od STMicroelectronics. Umožnuje generovat jak rychlé, tak i fázově korektní PWM. Dá se snadno portovat i na jiné rodiny STM32. Její využití je zamýšleno hlavně pro ovládání jesu většího množství LED.
 
 ## Použitý knihovny
-Je třeba si vytvořit instanci struktury `sw_pwm_channel_t` a pojmenovat ji `sw_pwm_channel`! Tu je třeba inicializovat na GPIO která chce uživatel použít. Předpokládá se, že uživatel si GPIO nastavyl jako výstupní za použití nástroje [STM32CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html).
+Je třeba si vytvořit instanci struktury `sw_pwm_channel_t` a pojmenovat ji `sw_pwm_channel`! Tu je třeba inicializovat na GPIO která chce uživatel použít. Předpokládá se, že uživatel si GPIO nastavil jako výstupní za použití nástroje [STM32CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html).
 
 ### Ukázka inicializace `sw_pwm_channel`
 ```C
