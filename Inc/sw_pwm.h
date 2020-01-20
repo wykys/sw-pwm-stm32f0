@@ -7,7 +7,7 @@
 ******************************************************************************/
 
 /**
- * "THE ROOT BEER LICENSE" (Revision 3) :
+ * "THE ROOT BEER LICENSE" (Revision 3):
  * <vvykys@gmail.com> wrote this file.
  * As long as you retain this notice you
  * can do whatever you want with this stuff.
