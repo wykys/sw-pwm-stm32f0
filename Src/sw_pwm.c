@@ -1,3 +1,11 @@
+/*******************************************************************************
+* @file    sw_pwm.c
+* @brief   Library for generating software pulse width modulation.
+* @version 1.0
+* @author  wykys
+* @date    20.1.2020
+*******************************************************************************/
+
 /**
  * "THE ROOT BEER LICENSE" (Revision 3) :
  * <vvykys@gmail.com> wrote this file.
@@ -7,11 +15,6 @@
  * this stuff is worth it, you can buy me a root beer in return.
  * Also, Jan Vykydal (wykys) is not responsible for anything that
  * might happen through use of this file.
- *
- * @brief Library for generating software pulse width modulation.
- * @author     wykys
- * @version    1.0
- * @date       20.1.2020
  */
 
 #include "sw_pwm.h"
